@@ -8,6 +8,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Real-time weather API endpoint with environment variable
 weather_api_key = os.getenv("WEATHER_API_KEY")
+
+# Print the API key to ensure it's being read correctly (remove this after debugging)
+st.write(f"Weather API Key: {weather_api_key}")
+
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 
 # Real disaster statistics (hypothetical)
@@ -36,7 +40,7 @@ def fetch_weather():
             data = response.json()
             return data
         else:
-            st.error(f"Error fetching weather data: {response.status_code}")
+            st.error(f"Error fetching weather data: {response.status_code} - {response.json().get('message', '')}")
             return None
     except Exception as e:
         st.error(f"Exception occurred: {e}")
