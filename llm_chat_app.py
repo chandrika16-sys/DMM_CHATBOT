@@ -7,6 +7,9 @@ import os
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Fetch real-time weather data from API
+# Real-time weather API endpoint with environment variable
+weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
+weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 # This section can be removed if not needed
 
 # Get a response from OpenAI GPT-3
