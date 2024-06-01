@@ -1,26 +1,15 @@
-import os
-import openai
+# Add necessary imports
 import streamlit as st
-import requests
+import openai
+import os
 
 # Set OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Real-time weather API endpoint with environment variable
-weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
-weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
-
-# Real disaster statistics (hypothetical)
-statistics = {
-    "people_injured": 1200,
-    "buildings_damaged": 230,
-    "deaths": 43,
-    "evacuated": 9500
-}
-
 # Fetch real-time weather data from API
-weather_response = requests.get(weather_api_url)
+# This section can be removed if not needed
 
+# Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
     try:
         response = openai.Completion.create(
@@ -34,6 +23,7 @@ def get_openai_response(prompt):
         st.error(f"Error fetching response from OpenAI: {e}")
         return "Sorry, I couldn't process your request at the moment."
 
+# Main function to run the Streamlit app
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
     st.header("Chat with the Disaster Management Bot")
@@ -41,35 +31,37 @@ def main():
     if "history" not in st.session_state:
         st.session_state.history = []
 
-    user_input = st.text_input("You:", key="input")
+    user_input = st.text_input("You:", key="input")  # Add a text input field for user input
     
-    if user_input:
-        st.session_state.history.append({"user": user_input})
+    if st.button("Send"):  # Add a button to submit the user input
+        if user_input:
+            st.session_state.history.append({"user": user_input})
 
-        if "emergency services" in user_input.lower():
-            response = "Here are the emergency contacts:\n"
-            for service, contact in emergency_contacts.items():
-                response += f"{service}: {contact}\n"
-        elif "statistics" in user_input.lower():
-            response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\nBuildings Damaged: {statistics['buildings_damaged']}\nDeaths: {statistics['deaths']}\nEvacuated: {statistics['evacuated']}"
-        elif "weather" in user_input.lower():
-            if weather_response.status_code == 200:
-                weather_data = weather_response.json()
-                weather = weather_data['weather'][0]['main']
-                temp = weather_data['main']['temp']
-                response = f"Current weather in Chennai: {temp}°C, {weather}"
+            if "emergency services" in user_input.lower():
+                response = "Here are the emergency contacts:\n"
+                for service, contact in emergency_contacts.items():
+                    response += f"{service}: {contact}\n"
+            elif "statistics" in user_input.lower():
+                response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\nBuildings Damaged: {statistics['buildings_damaged']}\nDeaths: {statistics['deaths']}\nEvacuated: {statistics['evacuated']}"
+            elif "weather" in user_input.lower():
+                if weather_response.status_code == 200:
+                    weather_data = weather_response.json()
+                    weather = weather_data['weather'][0]['main']
+                    temp = weather_data['main']['temp']
+                    response = f"Current weather in Chennai: {temp}°C, {weather}"
+                else:
+                    response = "Failed to fetch weather data. Please try again later."
             else:
-                response = "Failed to fetch weather data. Please try again later."
-        else:
-            response = get_openai_response(user_input)
-        
-        st.session_state.history.append({"bot": response})
+                # Call the function to get response from OpenAI with user input
+                response = get_openai_response(user_input)
+            
+            st.session_state.history.append({"bot": response})
 
-    for i, chat in enumerate(st.session_state.history):
+    for chat in st.session_state.history:
         if "user" in chat:
-            st.text_area(f"You {i+1}:", value=chat["user"], height=50, max_chars=None, key=f"user_{i}")
+            st.text_area("You:", value=chat["user"], height=50, max_chars=None, key=None)
         if "bot" in chat:
-            st.text_area(f"Bot {i+1}:", value=chat["bot"], height=100, max_chars=None, key=f"bot_{i}")
+            st.text_area("Bot:", value=chat["bot"], height=100, max_chars=None, key=None)
 
 if __name__ == "__main__":
     main()
