@@ -27,4 +27,4 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          llm_chat_app.py  
+          python llm_chat_app.py  
