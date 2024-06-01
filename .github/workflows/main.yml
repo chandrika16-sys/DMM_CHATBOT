@@ -25,6 +25,6 @@ jobs:
 
       - name: Run OpenAI script
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SECRET: ${{ secrets.SECRET }}
         run: |
           python llm_chat_app.py
