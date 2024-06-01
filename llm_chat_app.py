@@ -4,7 +4,7 @@ import streamlit as st
 import requests
 
 # Set OpenAI API key from environment variable
-openai.api_key = 'sk-proj-3FkcELSsep2gmVYFmEJBT3BlbkFJlaTd8w4sim4Da9CZItwe'
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Real-time weather API endpoint with environment variable
 weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
@@ -18,21 +18,9 @@ statistics = {
     "evacuated": 9500
 }
 
-# Emergency contacts (hypothetical)
-emergency_contacts = {
-    "police": "100",
-    "fire department": "101",
-    "ambulance": "102",
-    "disaster management control room": "1070",
-    "electricity department": "1912",
-    "local municipality": "1913"
-}
-
 # Fetch real-time weather data from API
 weather_response = requests.get(weather_api_url)
-print(weather_response.status_code)
 
-# Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
     try:
         response = openai.Completion.create(
@@ -45,8 +33,6 @@ def get_openai_response(prompt):
     except Exception as e:
         st.error(f"Error fetching response from OpenAI: {e}")
         return "Sorry, I couldn't process your request at the moment."
-
-import streamlit as st
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
