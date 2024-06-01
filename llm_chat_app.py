@@ -4,7 +4,7 @@ import streamlit as st
 import requests
 
 # Set OpenAI API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = 'sk-proj-3FkcELSsep2gmVYFmEJBT3BlbkFJlaTd8w4sim4Da9CZItwe'
 
 # Real-time weather API endpoint with environment variable
 weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
