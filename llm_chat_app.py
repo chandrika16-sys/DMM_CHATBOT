@@ -69,8 +69,6 @@ def main():
             weather = response.json()['weather'][0]['main']
             temp = response.json()['main']['temp']
             print(weather, temp)
-            else:
-                response = "Failed to fetch weather data. Please try again later."
         else:
             response = get_openai_response(user_input)
         
