@@ -8,7 +8,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Real-time weather API endpoint with environment variable
 weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
-
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 
 # Real disaster statistics (hypothetical)
@@ -30,8 +29,9 @@ emergency_contacts = {
 }
 
 # Fetch real-time weather data from API
-response = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q=Houston&appid={weather_api_key}&units=metric")
-print(response.status_code)
+weather_response = requests.get(weather_api_url)  # Changed variable name to weather_response
+print(weather_response.status_code)
+
 # Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
     try:
@@ -66,9 +66,13 @@ def main():
         elif "statistics" in user_input.lower():
             response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\nBuildings Damaged: {statistics['buildings_damaged']}\nDeaths: {statistics['deaths']}\nEvacuated: {statistics['evacuated']}"
         elif "weather" in user_input.lower():
-            weather = response.json()['weather'][0]['main']
-            temp = response.json()['main']['temp']
-            print(weather, temp)
+            if weather_response.status_code == 200:
+                weather_data = weather_response.json()
+                weather = weather_data['weather'][0]['main']
+                temp = weather_data['main']['temp']
+                response = f"Current weather in Chennai: {temp}°C, {weather}"
+            else:
+                response = "Failed to fetch weather data. Please try again later."
         else:
             response = get_openai_response(user_input)
         
