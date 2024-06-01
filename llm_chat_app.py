@@ -99,4 +99,4 @@ def main():
         if "user" in chat:
             st.text_area("You:", value=chat["user"], height=50, max_chars=None, key=None)
         if "bot" in chat:
-            st.text_area("Bot:", value=chat["bot"], height=10
+            st.text_area("Bot:", value=chat["bot"], height=100)
