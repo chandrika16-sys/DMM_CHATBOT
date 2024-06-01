@@ -7,10 +7,7 @@ import os
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Real-time weather API endpoint with environment variable
-weather_api_key = os.getenv("WEATHER_API_KEY")
-
-# Print the API key to ensure it's being read correctly (remove this after debugging)
-st.write(f"Weather API Key: {weather_api_key}")
+weather_api_key = 100d1c500f6ed18eb1592b012f49be35
 
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 
@@ -35,7 +32,7 @@ emergency_contacts = {
 # Fetch real-time weather data from API
 def fetch_weather():
     try:
-        response = requests.get(weather_api_url)
+        response = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q=Houston&appid={weather_api_key}&units=metric")
         if response.status_code == 200:
             data = response.json()
             return data
