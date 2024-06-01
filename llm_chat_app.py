@@ -78,12 +78,12 @@ def main():
             weather_data = fetch_weather()
             if weather_data:
                 # Extract and format the weather data
-                hourly_temperatures = weather_data.get("coordinates", [{}])[0].get("dates", [])
+                weather_details = weather_data.get("coordinates", [])[0].get("dates", [])
                 response = "Weather forecast:\n"
-                for entry in hourly_temperatures:
+                for entry in weather_details:
                     date = entry["date"]
-                    value = entry["value"]
-                    response += f"{date}: {value}°C\n"
+                    temperature = entry["value"]
+                    response += f"{date}: {temperature}°C\n"
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
