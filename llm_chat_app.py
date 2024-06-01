@@ -2,6 +2,7 @@
 import streamlit as st
 import openai
 import os
+import requests 
 
 # Set OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -10,7 +11,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Real-time weather API endpoint with environment variable
 weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
-# This section can be removed if not needed
 
 weather_response = requests.get(weather_api_url)  # Changed variable name to weather_response
 print(weather_response.status_code)
