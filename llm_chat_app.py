@@ -1,7 +1,7 @@
+import os
+import openai
 import streamlit as st
 import requests
-import openai
-import os
 
 # Set OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -29,7 +29,7 @@ emergency_contacts = {
 }
 
 # Fetch real-time weather data from API
-weather_response = requests.get(weather_api_url)  # Changed variable name to weather_response
+weather_response = requests.get(weather_api_url)
 print(weather_response.status_code)
 
 # Get a response from OpenAI GPT-3
