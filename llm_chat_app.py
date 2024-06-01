@@ -12,6 +12,9 @@ weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 # This section can be removed if not needed
 
+weather_response = requests.get(weather_api_url)  # Changed variable name to weather_response
+print(weather_response.status_code)
+
 # Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
     try:
