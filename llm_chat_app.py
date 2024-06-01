@@ -6,9 +6,8 @@ import os
 # Set OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Real-time weather API endpoint with environment variable
-weather_api_key = os.getenv("WEATHER_API_KEY")
-weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=London&appid={weather_api_key}&units=metric"
+# Real-time weather API endpoint (static URL provided)
+weather_api_url = "http://api.meteomatics.com/2024-06-01T00:00:00Z--2024-06-04T00:00:00Z:PT1H/t_2m:C,precip_1h:mm,wind_speed_10m:ms/52.520551,13.461804/json"
 
 # Real disaster statistics (hypothetical)
 statistics = {
@@ -30,22 +29,31 @@ emergency_contacts = {
 
 # Fetch real-time weather data from API
 def fetch_weather():
-    response = requests.get(weather_api_url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
+    try:
+        response = requests.get(weather_api_url)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            st.error(f"Error fetching weather data: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"Exception occurred: {e}")
         return None
 
 # Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
-    )
-    message = response.choices[0].text.strip()
-    return message
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompt,
+            max_tokens=150
+        )
+        message = response.choices[0].text.strip()
+        return message
+    except Exception as e:
+        st.error(f"Error fetching response from OpenAI: {e}")
+        return "Sorry, I couldn't process your request at the moment."
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
@@ -69,9 +77,13 @@ def main():
         elif "weather" in user_input.lower():
             weather_data = fetch_weather()
             if weather_data:
-                temperature = weather_data["main"]["temp"]
-                conditions = weather_data["weather"][0]["description"]
-                response = f"Current weather in Chennai: {temperature}°C, {conditions}"
+                # Extract and format the weather data
+                hourly_temperatures = weather_data.get("coordinates", [{}])[0].get("dates", [])
+                response = "Weather forecast:\n"
+                for entry in hourly_temperatures:
+                    date = entry["date"]
+                    value = entry["value"]
+                    response += f"{date}: {value}°C\n"
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
