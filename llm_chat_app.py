@@ -46,9 +46,10 @@ def get_openai_response(prompt):
         st.error(f"Error fetching response from OpenAI: {e}")
         return "Sorry, I couldn't process your request at the moment."
 
+import streamlit as st
+
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
-
     st.header("Chat with the Disaster Management Bot")
 
     if "history" not in st.session_state:
@@ -78,11 +79,11 @@ def main():
         
         st.session_state.history.append({"bot": response})
 
-    for chat in st.session_state.history:
+    for i, chat in enumerate(st.session_state.history):
         if "user" in chat:
-            st.text_area("You:", value=chat["user"], height=50, max_chars=None, key=None)
+            st.text_area(f"You {i+1}:", value=chat["user"], height=50, max_chars=None, key=f"user_{i}")
         if "bot" in chat:
-            st.text_area("Bot:", value=chat["bot"], height=100, max_chars=None, key=None)
+            st.text_area(f"Bot {i+1}:", value=chat["bot"], height=100, max_chars=None, key=f"bot_{i}")
 
 if __name__ == "__main__":
     main()
