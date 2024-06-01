@@ -30,22 +30,31 @@ emergency_contacts = {
 
 # Fetch real-time weather data from API
 def fetch_weather():
-    response = requests.get(weather_api_url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
+    try:
+        response = requests.get(weather_api_url)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            st.error(f"Error fetching weather data: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"Exception occurred: {e}")
         return None
 
 # Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
-    )
-    message = response.choices[0].text.strip()
-    return message
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompt,
+            max_tokens=150
+        )
+        message = response.choices[0].text.strip()
+        return message
+    except Exception as e:
+        st.error(f"Error fetching response from OpenAI: {e}")
+        return "Sorry, I couldn't process your request at the moment."
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
@@ -69,9 +78,30 @@ def main():
         elif "weather" in user_input.lower():
             weather_data = fetch_weather()
             if weather_data:
-                temperature = weather_data["main"]["temp"]
-                conditions = weather_data["weather"][0]["description"]
-                response = f"Current weather in Chennai: {temperature}°C, {conditions}"
+                temperature = weather_data["current"]["temp"]
+                feels_like = weather_data["current"]["feels_like"]
+                pressure = weather_data["current"]["pressure"]
+                humidity = weather_data["current"]["humidity"]
+                dew_point = weather_data["current"]["dew_point"]
+                uvi = weather_data["current"]["uvi"]
+                clouds = weather_data["current"]["clouds"]
+                visibility = weather_data["current"]["visibility"]
+                wind_speed = weather_data["current"]["wind_speed"]
+                wind_deg = weather_data["current"]["wind_deg"]
+                wind_gust = weather_data["current"]["wind_gust"]
+
+                response = (f"Current weather in Chennai:\n"
+                            f"Temperature: {temperature}°C\n"
+                            f"Feels Like: {feels_like}°C\n"
+                            f"Pressure: {pressure} hPa\n"
+                            f"Humidity: {humidity}%\n"
+                            f"Dew Point: {dew_point}°C\n"
+                            f"UV Index: {uvi}\n"
+                            f"Clouds: {clouds}%\n"
+                            f"Visibility: {visibility} meters\n"
+                            f"Wind Speed: {wind_speed} m/s\n"
+                            f"Wind Direction: {wind_deg}°\n"
+                            f"Wind Gust: {wind_gust} m/s")
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
