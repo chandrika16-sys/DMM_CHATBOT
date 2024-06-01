@@ -6,10 +6,6 @@ import requests
 # Set OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Ensure the API key is available
-if not openai.api_key:
-    raise ValueError("No OpenAI API key provided")
-
 # Real-time weather API endpoint
 weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
