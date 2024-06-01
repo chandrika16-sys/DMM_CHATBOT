@@ -8,7 +8,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Real-time weather API endpoint with environment variable
 weather_api_key = os.getenv("WEATHER_API_KEY")
-weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
+weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=London&appid={weather_api_key}&units=metric"
 
 # Real disaster statistics (hypothetical)
 statistics = {
