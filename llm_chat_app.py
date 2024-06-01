@@ -31,6 +31,7 @@ emergency_contacts = {
 
 # Fetch real-time weather data from API
 response = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q=Houston&appid={weather_api_key}&units=metric")
+print(response.status_code)
 # Get a response from OpenAI GPT-3
 def get_openai_response(prompt):
     try:
@@ -65,11 +66,9 @@ def main():
         elif "statistics" in user_input.lower():
             response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\nBuildings Damaged: {statistics['buildings_damaged']}\nDeaths: {statistics['deaths']}\nEvacuated: {statistics['evacuated']}"
         elif "weather" in user_input.lower():
-            weather_data = response.json()
-            if weather_data:
-                weather = weather_data['weather'][0]['main']
-                temp = weather_data['main']['temp']
-                print(weather, temp)
+            weather = response.json()['weather'][0]['main']
+            temp = response.json()['main']['temp']
+            print(weather, temp)
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
