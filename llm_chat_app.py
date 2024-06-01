@@ -9,6 +9,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Real-time weather API endpoint (static URL provided)
 weather_api_url = "http://api.meteomatics.com/2024-06-01T00:00:00Z--2024-06-04T00:00:00Z:PT1H/t_2m:C,precip_1h:mm,wind_speed_10m:ms/52.520551,13.461804/json"
 
+# Replace with your Meteomatics API credentials
+username = "bmsce_naidu_akshaya"
+password = "62tVvEp6iH"
+
 # Real disaster statistics (hypothetical)
 statistics = {
     "people_injured": 1200,
@@ -30,7 +34,7 @@ emergency_contacts = {
 # Fetch real-time weather data from API
 def fetch_weather():
     try:
-        response = requests.get(weather_api_url)
+        response = requests.get(weather_api_url, auth=(username, password))
         if response.status_code == 200:
             data = response.json()
             return data
@@ -95,7 +99,4 @@ def main():
         if "user" in chat:
             st.text_area("You:", value=chat["user"], height=50, max_chars=None, key=None)
         if "bot" in chat:
-            st.text_area("Bot:", value=chat["bot"], height=100, max_chars=None, key=None)
-
-if __name__ == "__main__":
-    main()
+            st.text_area("Bot:", value=chat["bot"], height=10
