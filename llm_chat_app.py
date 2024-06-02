@@ -1,14 +1,6 @@
 import os
 import requests
 import streamlit as st
-import openai
-
-# Set OpenAI API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Real-time weather API endpoint
-weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
-weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 
 # Real disaster statistics (hypothetical)
 statistics = {
@@ -29,18 +21,26 @@ emergency_contacts = {
 }
 
 # Fetch real-time weather data from API
+weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
+weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 weather_response = requests.get(weather_api_url)
-print(weather_response.status_code)
 
 # Function to get a response from OpenAI GPT
 def get_openai_response(prompt):
     try:
-        response = openai.Completion.create(
-            engine="gpt-4",  # Use the updated model name
-            prompt=prompt,
-            max_tokens=150
+        response = requests.post(
+            "https://api.openai.com/v1/engines/davinci-codex/completions",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}"
+            },
+            json={
+                "prompt": prompt,
+                "max_tokens": 150
+            }
         )
-        message = response.choices[0].text.strip()
+        data = response.json()
+        message = data['choices'][0]['text'].strip()
         return message
     except Exception as e:
         st.error(f"Error fetching response from OpenAI: {e}")
