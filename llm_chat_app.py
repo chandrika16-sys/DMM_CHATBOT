@@ -1,6 +1,7 @@
 import os
 import requests
 import streamlit as st
+from transformers import pipeline
 
 # Real disaster statistics (hypothetical)
 statistics = {
@@ -25,30 +26,33 @@ weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
 weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
 weather_response = requests.get(weather_api_url)
 
-# Function to get a response from OpenAI GPT
-def get_openai_response(prompt):
+# Initialize the question answering pipeline
+qa_pipeline = pipeline("question-answering")
+
+# Placeholder questions and answers (to be replaced with actual data)
+questions = [
+    "Why did the disaster management in Chennai fail?",
+    "How to improve disaster management in Chennai?",
+    "Who are the stakeholders involved in disaster management in Chennai?",
+    "How can we as students contribute to disaster management in Chennai?",
+    "Is there any need for improvement in disaster management in Chennai?"
+]
+
+answers = [
+    "Placeholder answer for question 1",
+    "Placeholder answer for question 2",
+    "Placeholder answer for question 3",
+    "Placeholder answer for question 4",
+    "Placeholder answer for question 5"
+]
+
+def generate_answer(question, context):
     try:
-        response = requests.post(
-            "https://api.openai.com/v1/engines/davinci/completions",  # Use "davinci" for GPT-3 or "text-davinci-003" for GPT-4
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}"
-            },
-            json={
-                "prompt": prompt,
-                "max_tokens": 200  # Increase max_tokens for longer responses
-            }
-        )
-        data = response.json()
-        choices = data.get('choices', [])
-        if choices:
-            message = choices[0].get('text', '').strip()
-            return message
-        else:
-            return "No response from the model."
+        answer = qa_pipeline(question=question, context=context)
+        return answer['answer']
     except Exception as e:
-        st.error(f"Error fetching response from OpenAI: {e}")
-        return "Sorry, I couldn't process your request at the moment."
+        st.error(f"Error generating answer: {e}")
+        return "Sorry, I couldn't generate an answer at the moment."
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
@@ -77,8 +81,8 @@ def main():
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
-            prompt = f"Question: {user_input}\nContext: The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively.\nAnswer:"
-            response = get_openai_response(prompt)
+            context = "The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively."
+            response = generate_answer(user_input, context)
 
         st.session_state.history.append({"bot": response})
 
