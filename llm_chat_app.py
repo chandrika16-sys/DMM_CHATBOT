@@ -1,7 +1,10 @@
 import os
 import requests
 import streamlit as st
-from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
+import openai
+
+# Set OpenAI API key from environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Real-time weather API endpoint
 weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
@@ -29,22 +32,19 @@ emergency_contacts = {
 weather_response = requests.get(weather_api_url)
 print(weather_response.status_code)
 
-# Load a pre-trained language model and tokenizer from Hugging Face
-model_name = "gpt2"  # You can use other models like 'distilgpt2' or 'gpt-neo-125M'
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
-
-# Function to get response from the Hugging Face model
-def get_model_response(question):
-    # Provide a more detailed context
-    context = """
-    The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively.
-    """
-    prompt = f"Question: {question}\nContext: {context}\nAnswer:"
-    inputs = tokenizer.encode(prompt, return_tensors='pt')
-    outputs = model.generate(inputs, max_length=150, num_return_sequences=1)
-    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return answer
+# Function to get a response from OpenAI GPT
+def get_openai_response(prompt):
+    try:
+        response = openai.Completion.create(
+            engine="gpt-4",  # Use the updated model name
+            prompt=prompt,
+            max_tokens=150
+        )
+        message = response.choices[0].text.strip()
+        return message
+    except Exception as e:
+        st.error(f"Error fetching response from OpenAI: {e}")
+        return "Sorry, I couldn't process your request at the moment."
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
@@ -73,7 +73,8 @@ def main():
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
-            response = get_model_response(user_input)
+            prompt = f"Question: {user_input}\nContext: The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively.\nAnswer:"
+            response = get_openai_response(prompt)
 
         st.session_state.history.append({"bot": response})
 
