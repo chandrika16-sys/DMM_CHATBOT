@@ -29,20 +29,30 @@ weather_response = requests.get(weather_api_url)
 # Initialize the question answering pipeline
 qa_pipeline = pipeline("question-answering")
 
-# Placeholder context (to be replaced with actual data)
-context = """
-The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively.
-"""
+# Placeholder questions and answers (to be replaced with actual data)
+questions = [
+    "Why did the disaster management in Chennai fail?",
+    "How to improve disaster management in Chennai?",
+    "Who are the stakeholders involved in disaster management in Chennai?",
+    "How can we as students contribute to disaster management in Chennai?",
+    "Is there any need for improvement in disaster management in Chennai?"
+]
 
-def generate_answers(questions, context):
-    answers = []
-    for question in questions:
-        try:
-            answer = qa_pipeline(question=question, context=context)
-            answers.append(answer['answer'])
-        except Exception as e:
-            answers.append("Error generating answer.")
-    return answers
+answers = [
+    "Placeholder answer for question 1",
+    "Placeholder answer for question 2",
+    "Placeholder answer for question 3",
+    "Placeholder answer for question 4",
+    "Placeholder answer for question 5"
+]
+
+def generate_answer(question, context):
+    try:
+        answer = qa_pipeline(question=question, context=context)
+        return answer['answer']
+    except Exception as e:
+        st.error(f"Error generating answer: {e}")
+        return "Sorry, I couldn't generate an answer at the moment."
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
@@ -71,8 +81,8 @@ def main():
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
-            answers = generate_answers([user_input], context)
-            response = answers[0] if answers else "No response generated."
+            context = "The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively."
+            response = generate_answer(user_input, context)
 
         st.session_state.history.append({"bot": response})
 
