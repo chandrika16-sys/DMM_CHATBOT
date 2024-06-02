@@ -36,7 +36,12 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 
 # Function to get response from the Hugging Face model
 def get_model_response(question):
-    inputs = tokenizer.encode(question, return_tensors='pt')
+    # Provide a more detailed context
+    context = """
+    The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively.
+    """
+    prompt = f"Question: {question}\nContext: {context}\nAnswer:"
+    inputs = tokenizer.encode(prompt, return_tensors='pt')
     outputs = model.generate(inputs, max_length=150, num_return_sequences=1)
     answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return answer
