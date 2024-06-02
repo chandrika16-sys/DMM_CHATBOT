@@ -40,8 +40,12 @@ def get_openai_response(prompt):
             }
         )
         data = response.json()
-        message = data['choices'][0]['text'].strip()
-        return message
+        choices = data.get('choices', [])
+        if choices:
+            message = choices[0].get('text', '').strip()
+            return message
+        else:
+            return "No response from the model."
     except Exception as e:
         st.error(f"Error fetching response from OpenAI: {e}")
         return "Sorry, I couldn't process your request at the moment."
@@ -85,4 +89,4 @@ def main():
             st.text_area(f"Bot {i+1}:", value=chat["bot"], height=100, max_chars=None, key=f"bot_{i}")
 
 if __name__ == "__main__":
-    main()
+    main(
