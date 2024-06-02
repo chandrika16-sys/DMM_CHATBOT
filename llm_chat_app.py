@@ -89,4 +89,4 @@ def main():
             st.text_area(f"Bot {i+1}:", value=chat["bot"], height=100, max_chars=None, key=f"bot_{i}")
 
 if __name__ == "__main__":
-    main(
+    main()
