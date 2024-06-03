@@ -99,7 +99,7 @@ def main():
             for service, contact in emergency_contacts.items():
                 response += f"{service}: {contact}\n"
         elif "statistics" in user_input.lower():
-            response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\nBuildings Damaged: {statistics['buildings_damaged']}\nDeaths: {statistics['deaths']}\nEvacuated: {statistics['evacuated']}"
+            response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\n Buildings Damaged: {statistics['buildings_damaged']}\n Deaths: {statistics['deaths']}\n Evacuated: {statistics['evacuated']}"
         elif "weather" in user_input.lower():
             if weather_response.status_code == 200:
                 weather_data = weather_response.json()
