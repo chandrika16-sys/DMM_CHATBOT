@@ -76,11 +76,20 @@ answers = [
 
 def generate_answer(question, context):
     try:
-        answer = qa_pipeline(question=question, context=context)
-        return answer['answer']
+        question_index = -1
+        for i, q in enumerate(questions):
+            if q.lower() in question.lower():
+                question_index = i
+                break
+
+        if question_index != -1:
+            return answers[question_index]
+        else:
+            return "Sorry, I couldn't find an answer to that question."
     except Exception as e:
         st.error(f"Error generating answer: {e}")
         return "Sorry, I couldn't generate an answer at the moment."
+
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
