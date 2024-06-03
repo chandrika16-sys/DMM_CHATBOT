@@ -121,30 +121,26 @@ def main():
             for center in resource_directories["relief_centers"]:
                 response += f"- {center}\n"
         elif "resource help" in user_input.lower():
-            response = "For resource help, you can contact the following:\n"
-            for service, contact in emergency_contacts.items():
-                response += f"{service}: {contact}\n"
+            response = "For resource help, please specify if you need shelters, hospitals, or relief centers."
         else:
-            context = (
-                "The city of Chennai has faced significant challenges in flood management over the years. "
-                "Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. "
-                "In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. "
-                "Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited "
-                "as reasons for the failure in managing the floods effectively. "
-                "Improving disaster management in Chennai requires a multifaceted approach including better urban planning, "
-                "upgraded infrastructure, timely emergency responses, and active community participation."
-            )
-            response = generate_answer(user_input, context)
+            # Default to answering predefined questions
+            question_index = -1
+            for i, q in enumerate(questions):
+                if q.lower() in user_input.lower():
+                    question_index = i
+                    break
 
-        st.session_state.history.append({"bot": response})
+            if question_index != -1:
+                context = " ".join(answers)
+                response = generate_answer(questions[question_index], context)
+            else:
+                response = "I'm sorry, I didn't understand your question. Please ask about emergency services, statistics, weather, shelters, hospitals, or relief centers."
 
-    for i, chat in enumerate(st.session_state.history):
-        if "user" in chat:
-            st.text_area(f"You {i+1}:", value=chat["user"], height=50, max_chars=None, key=f"user_{i}")
-        if "bot" in chat:
-            st.text_area(f"Bot {i+1}:", value=chat["bot"], height=100, max_chars=None, key=f"bot_{i}")
+        st.session_state.history[-1]["bot"] = response
+
+    for chat in st.session_state.history:
+        st.write(f"You: {chat['user']}")
+        st.write(f"Bot: {chat['bot']}")
 
 if __name__ == "__main__":
     main()
-    st.write("Bot's response: " + response)
-
