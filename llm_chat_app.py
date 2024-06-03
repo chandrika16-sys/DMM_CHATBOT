@@ -1,14 +1,7 @@
-import streamlit as st
-import requests
-import openai
 import os
-
-# Set OpenAI API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Real-time weather API endpoint with environment variable
-weather_api_key = os.getenv("WEATHER_API_KEY")
-weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
+import requests
+import streamlit as st
+from transformers import pipeline
 
 # Real disaster statistics (hypothetical)
 statistics = {
@@ -29,34 +22,47 @@ emergency_contacts = {
 }
 
 # Fetch real-time weather data from API
-def fetch_weather():
-    response = requests.get(weather_api_url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        return None
+weather_api_key = '100d1c500f6ed18eb1592b012f49be35'
+weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q=Chennai&appid={weather_api_key}&units=metric"
+weather_response = requests.get(weather_api_url)
 
-# Get a response from OpenAI GPT-3
-def get_openai_response(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
-    )
-    message = response.choices[0].text.strip()
-    return message
+# Initialize the question answering pipeline
+qa_pipeline = pipeline("question-answering")
+
+# Placeholder questions and answers (to be replaced with actual data)
+questions = [
+    "Why did the disaster management in Chennai fail?",
+    "How to improve disaster management in Chennai?",
+    "Who are the stakeholders involved in disaster management in Chennai?",
+    "How can we as students contribute to disaster management in Chennai?",
+    "Is there any need for improvement in disaster management in Chennai?"
+]
+
+answers = [
+    "Placeholder answer for question 1",
+    "Placeholder answer for question 2",
+    "Placeholder answer for question 3",
+    "Placeholder answer for question 4",
+    "Placeholder answer for question 5"
+]
+
+def generate_answer(question, context):
+    try:
+        answer = qa_pipeline(question=question, context=context)
+        return answer['answer']
+    except Exception as e:
+        st.error(f"Error generating answer: {e}")
+        return "Sorry, I couldn't generate an answer at the moment."
 
 def main():
     st.title("Chennai Floods Disaster Management Chatbot")
-
     st.header("Chat with the Disaster Management Bot")
 
     if "history" not in st.session_state:
         st.session_state.history = []
 
     user_input = st.text_input("You:", key="input")
-    
+
     if user_input:
         st.session_state.history.append({"user": user_input})
 
@@ -67,24 +73,24 @@ def main():
         elif "statistics" in user_input.lower():
             response = f"Disaster Statistics:\nPeople Injured: {statistics['people_injured']}\nBuildings Damaged: {statistics['buildings_damaged']}\nDeaths: {statistics['deaths']}\nEvacuated: {statistics['evacuated']}"
         elif "weather" in user_input.lower():
-            weather_data = fetch_weather()
-            if weather_data:
-                temperature = weather_data["main"]["temp"]
-                conditions = weather_data["weather"][0]["description"]
-                response = f"Current weather in Chennai: {temperature}°C, {conditions}"
+            if weather_response.status_code == 200:
+                weather_data = weather_response.json()
+                weather = weather_data['weather'][0]['main']
+                temp = weather_data['main']['temp']
+                response = f"Current weather in Chennai: {temp}°C, {weather}"
             else:
                 response = "Failed to fetch weather data. Please try again later."
         else:
-            response = get_openai_response(user_input)
-        
+            context = "The city of Chennai has faced significant challenges in flood management over the years. Despite various efforts, the disaster management strategies have often been criticized for their inefficacy. In particular, the 2015 Chennai floods were devastating, causing widespread damage and loss of life. Issues such as poor urban planning, inadequate drainage systems, and delayed emergency responses have been cited as reasons for the failure in managing the floods effectively."
+            response = generate_answer(user_input, context)
+
         st.session_state.history.append({"bot": response})
 
-    for chat in st.session_state.history:
+    for i, chat in enumerate(st.session_state.history):
         if "user" in chat:
-            st.text_area("You:", value=chat["user"], height=50, max_chars=None, key=None)
+            st.text_area(f"You {i+1}:", value=chat["user"], height=50, max_chars=None, key=f"user_{i}")
         if "bot" in chat:
-            st.text_area("Bot:", value=chat["bot"], height=100, max_chars=None, key=None)
+            st.text_area(f"Bot {i+1}:", value=chat["bot"], height=100, max_chars=None, key=f"bot_{i}")
 
 if __name__ == "__main__":
     main()
-
