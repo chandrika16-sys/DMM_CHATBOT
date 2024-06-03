@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 from transformers import pipeline
+from fuzzywuzzy import fuzz
 
 # Real disaster statistics (hypothetical)
 statistics = {
@@ -76,14 +77,17 @@ answers = [
 
 def generate_answer(question, context):
     try:
-        question_index = -1
-        for i, q in enumerate(questions):
-            if q.lower() in question.lower():
-                question_index = i
-                break
+        best_match = -1
+        highest_score = 0
 
-        if question_index != -1:
-            return answers[question_index]
+        for i, q in enumerate(questions):
+            score = fuzz.partial_ratio(q.lower(), question.lower())
+            if score > highest_score:
+                highest_score = score
+                best_match = i
+
+        if best_match != -1 and highest_score > 70:  # Threshold for a good match
+            return answers[best_match]
         else:
             return "Sorry, I couldn't find an answer to that question."
     except Exception as e:
@@ -133,17 +137,8 @@ def main():
             response = "For resource help, please specify if you need shelters, hospitals, or relief centers."
         else:
             # Default to answering predefined questions
-            question_index = -1
-            for i, q in enumerate(questions):
-                if q.lower() in user_input.lower():
-                    question_index = i
-                    break
-
-            if question_index != -1:
-                context = " ".join(answers)
-                response = generate_answer(questions[question_index], context)
-            else:
-                response = "I'm sorry, I didn't understand your question. Please ask about emergency services, statistics, weather, shelters, hospitals, or relief centers."
+            context = " ".join(answers)
+            response = generate_answer(user_input, context)
 
         st.session_state.history[-1]["bot"] = response
 
