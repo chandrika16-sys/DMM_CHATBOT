@@ -1,3 +1,4 @@
+fuzzywuzzy[speedup]
 streamlit==1.16.0
 openai==0.10.0
 requests==2.25.1
