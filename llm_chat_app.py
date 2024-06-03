@@ -146,5 +146,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    st.write("Bot's response:", response)
+    st.write("Bot's response: " + response)
 
